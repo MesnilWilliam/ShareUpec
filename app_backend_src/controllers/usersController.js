@@ -10,6 +10,8 @@
 //Import UserModel for Database Interactions
 const bcrypt = require('bcrypt');
 const UserModel = require('../models/UserModel.js');
+const dotenv = require('dotenv');
+dotenv.config();
 
 //@desc Get users from database
 //@route GET /users
@@ -46,8 +48,8 @@ const createUser = async (req,res) => {
     };
 
     //Take and Hash Password
-    const saltRound = 10;
-    const hashedPassword = await bcrypt.hash(formUser.password,saltRound);
+    const saltRounds = (process.env.BCRYPT_SALT_ROUNDS ? parseInt(process.env.BCRYPT_SALT_ROUNDS) : 10);
+    const hashedPassword = await bcrypt.hash(formUser.password,saltRounds);
 
     //Only use Needed Fields to let AutoGen Fill ID and then some
     const addedUser = await UserModel.create({

@@ -16,10 +16,11 @@ const FORBIDDEN_TITLE = "Forbidden Request";
 const NOT_FOUND_TITLE = "Page Not Found";
 const SERVER_ERROR_TITLE = "Server Error";
 
+//TODO : Add Try/Catch to see if better and Fix App Crash
 const errorHandler = (err,req,res,next) => {
     //Retreive Status or assume Server Error 500
     const statusCode = res.statusCode ? res.statusCode : SERVER_ERROR;
-    const shouldSend = true;
+    var shouldSend = true;
     var payload = {};
     
     switch(statusCode){
@@ -64,7 +65,7 @@ const errorHandler = (err,req,res,next) => {
     if(shouldSend){
         res.json(payload);
     }
-    next();
+    return next();
 }
 
 module.exports = errorHandler;
