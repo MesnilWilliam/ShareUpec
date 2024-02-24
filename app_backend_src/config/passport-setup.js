@@ -49,16 +49,16 @@ passport.use(
         });
         if(!user){
             //User Not Found
-            done(null,false);
+            return done(null,false);
         }
         //User Found Check PassWord
         const matchPassword = await bcrypt.compare(password,user.password);
         if(!matchPassword){
             //Wrong Password
-            done(null,false);
+            return done(null,false);
         }
         //User Email and Password OK
-        done(null,user);
+        return done(null,user);
     })
 );
 
