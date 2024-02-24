@@ -15,4 +15,10 @@ authRouter.route('/login').post(authController.postLoginForm);
 //Logout User
 authRouter.route('/logout').post(authController.postLogout);
 
+//Registration Page
+authRouter.route('/registration').get(authController.getRegistrationForm);
+
+//Registration User
+authRouter.route('/registration').post(authController.postRegistrationForm);
+
 module.exports = authRouter;

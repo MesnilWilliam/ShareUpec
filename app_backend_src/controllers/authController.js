@@ -10,6 +10,8 @@
 //These Functions should all be On Routes to Authenticate User
 //If User Authentication fails somewhere in App, They are taken to Login Page and Therefor Function defined Here for Login is Called
 const passportSet = require('../config/passport-setup.js');
+const bcrypt = require('bcrypt');
+const UserModel = require('../models/UserModel.js');
 
 //@desc Get Redirected to Login Page for Authentication
 //@route GET /auth
@@ -54,10 +56,56 @@ const postLogout = (req,res,next) => {
     });
 }
 
+//@desc Get Registration Form for New User
+//@route GET /auth/registration
+//@access public
+const getRegistrationForm = (req,res) => {
+    //Display Registration Form
+    res.status(200).send("Please fill the registration form");
+};
+
+//@desc Post Registration Form Data and Try Creation of New User in Database
+//@route POST /auth/registration
+//@access public
+const postRegistrationForm = async (req,res) => {
+    //Retreive Request Body data
+    const formUser = {
+        ...req.body
+    };
+    
+    //Check all needed Fields are here
+    if(!formUser.first_name || !formUser.last_name || !formUser.email || !formUser.password){
+        res.status(400);
+        throw new Error("Could not proceed : Missing Value");
+    };
+
+    //Take and Hash Password
+    const saltRounds = (process.env.BCRYPT_SALT_ROUNDS ? parseInt(process.env.BCRYPT_SALT_ROUNDS) : 10);
+    const hashedPassword = await bcrypt.hash(formUser.password,saltRounds);
+
+    //Only use Needed Fields to let AutoGen Fill ID and then some
+    const addedUser = await UserModel.create({
+        first_name: formUser.first_name,
+        last_name: formUser.last_name,
+        email: formUser.email,
+        password: hashedPassword
+    });
+
+    //Check if somehow User Undefined
+    if(!addedUser){
+        res.status(500);
+        throw new Error("Error : Something Happened");
+    };
+
+    res.status(201).send(`POST auth/registration : Created User with ID ${addedUser.id}`);
+};
+
 //Authorize other Modules to make use of Callbacks defined here
 module.exports = {
     getAuthRedirectLogin,
     getLoginForm,
     postLoginForm,
-    postLogout
+    postLogout,
+    getRegistrationForm,
+    postRegistrationForm
 };
