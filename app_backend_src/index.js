@@ -55,7 +55,7 @@ const UserModel = require('./models/UserModel.js');
 const homeRouter = require('./routes/homeRouter.js');
 const authRouter = require('./routes/authRouter.js');
 const dashboardRouter = require('./routes/dashboardRouter.js');
-const usersRouter = require('./routes/usersRouter.js');
+const adminRouter = require('./routes/adminRouter.js');
 const checkAuthenticated = require('./middlewares/authMiddleware.js');
 const errorHandler = require('./middlewares/errorHandler.js');
 
@@ -105,8 +105,8 @@ app.use('/',homeRouter);
 app.use('/auth',authRouter);
 //Routes for User Dashboard
 app.use('/dashboard',dashboardRouter);
-//Routes for Users
-app.use('/users',usersRouter);
+//Routes for Admin
+app.use('/admin',adminRouter);
 
 //MIddleWare for Error
 //app.use(errorHandler);
@@ -123,18 +123,18 @@ app.listen(PORT, () => {
 //Tutorial NODE : https://www.youtube.com/watch?v=Oe421EPjeBE
 //TypeScript IS Better : https://github.com/ljlm0402/typescript-express-starter
 
-//Passport and Strategy are use for Session and Authentication
-//Passport help the already Authenticated User use a session with the Server
+//Passport and Strategy are used for Session and Authentication
+//Passport help the already Authenticated User use a Session with the Server
 //Strategy help Authenticate the User
 
-//Passport is Initialized for all routes as the function passport.deserialiseUser() use Cookie previously sent to Client in order put data in req.session
+//Passport is Initialized for all routes as the function passport.deserialiseUser() use Cookie previously sent to Client in order put data in req.user
 
 //req.isAuthenticated() check if User alread Loged by passport.authenticate() and so field req.session.passport.user is defined
 
-//passport.serializeUser() is called by done() of Strategy Authenticate Function used in passport.authenticate() and Add User Object to req.session.passport.user
-//passport.serializeUser() creates a Cookie that is sent diretly Client by calling done(null,Data)
+//passport.serializeUser() is called by done() of Strategy Authenticate Function used in passport.authenticate() and Add User Object with the Serialized Properties to req.session.passport.user
+//passport.serializeUser() creates a Field passport in the Cookie that is sent diretly to the Client by calling done(null,Object)
 
 //passport.deserializeUser() is called when querying any route and place content of req.session.passport.user in req.user if there is User Connected
-//passport.deserializeUser() check Cookie received from Client and get data
+//passport.deserializeUser() check Cookie received from Client and get data with Cookie Session ID
 
-//Using serialize and deserialize allow Cookie to travel Server>Client then Client>Server
+//Using serialize and deserialize allow Cookie to travel with Our User Info Server>Client then Client>Server

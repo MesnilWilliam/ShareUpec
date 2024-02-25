@@ -12,12 +12,13 @@ const databaseSequelizeConnexion = require('../database/databaseConnexion.js');
 const dotenv = require('dotenv');
 dotenv.config();
 
+const roleUser = process.env.ROLE_USER || 0;
 
-//TODO : Add User.role regarding the App : Simple User or Admin
-//Admin mostly takes place inside the DB yet should still Add User.role as to allow further development of App
+//Admin mostly takes place inside the DB still User.role can Allow Admin to Act on DB from App
 const UserModel = databaseSequelizeConnexion.define(process.env.USERS_NAME,{
     id:{
         type: DataTypes.BIGINT,
+        allowNull: false,
         autoIncrement: true,
         primaryKey: true,
     },
@@ -38,8 +39,14 @@ const UserModel = databaseSequelizeConnexion.define(process.env.USERS_NAME,{
         type: DataTypes.STRING(300),
         allowNull: false
     },
+    role:{
+        type: DataTypes.SMALLINT,
+        allowNull: false,
+        defaultValue: roleUser
+    },
     share_code:{
         type: DataTypes.UUID,
+        allowNull: false,
         defaultValue: DataTypes.UUIDV4 // Or DataTypes.UUIDV1
     }
 });

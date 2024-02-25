@@ -11,6 +11,7 @@ const databaseSequelizeConnexion = require('../database/databaseConnexion.js');
 const UserModel = require('../models/UserModel.js');
 
 //Passport.serialize(Function) create and send Cookie containing all data to uniquely identify Client
+//The data are added to the Cookie as property req.session.passport.user
 //User is instance of UserModel
 passport.serializeUser((user,done) => {
     //Calling done(Error,Object) allow to create Cookie
@@ -18,12 +19,12 @@ passport.serializeUser((user,done) => {
     done(null,user.id);
 });
 
-//Passport.deserialize(Function) check Cookie from Client and all data are Queried from DB based on Cookie
+//Passport.deserialize(Function) check Cookie from Client and all data are Queried from DB based on Cookie Session ID
 passport.deserializeUser(async (id,done) => {
     //Querry One User with id from Cookie
     const user = await UserModel.findOne({
         where: {id: id},
-        attributes: ['id','first_name','last_name','email']
+        attributes: ['id','first_name','last_name','email','role']
     });
     //Calling done(Error,Object) allow to forward User
     //If OK send No Error and Forward User

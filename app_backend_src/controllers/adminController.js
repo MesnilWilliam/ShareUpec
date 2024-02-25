@@ -1,5 +1,5 @@
-//Controller for using Users Router
-//Callbacks of Users Routes are defined using Arrow Syntax for readability
+//Controller for using Admin Router
+//Callbacks of Admin Routes are defined using Arrow Syntax for readability
 //Use JSON.stringify(Onject) to Print JSON for Console LOG
 
 //Assume in Following Functions
@@ -13,8 +13,8 @@ const UserModel = require('../models/UserModel.js');
 const dotenv = require('dotenv');
 dotenv.config();
 
-//@desc Get users from database
-//@route GET /users
+//@desc Get Users from database
+//@route GET /admin/users
 //@access public
 const getUsers = async (req,res) => {
     //Querry all Users
@@ -29,11 +29,11 @@ const getUsers = async (req,res) => {
         throw new Error("Error : Something Happened");
     };
     
-    res.status(200).send(`GET /users on User API : Fetched Users : ${JSON.stringify(users, null, 2)}`);
+    res.status(200).send(`GET /admin/users on Admin API : Fetched Users : ${JSON.stringify(users, null, 2)}`);
 };
 
-//@desc Create and add user to database
-//@route POST /users
+//@desc Create and add User to database
+//@route POST /admin/users
 //@access public
 const createUser = async (req,res) => {
     //Retreive Request Body data
@@ -65,11 +65,11 @@ const createUser = async (req,res) => {
         throw new Error("Error : Something Happened");
     };
 
-    res.status(201).send(`POST /users on User API : Created User with ID ${addedUser.id}`);
+    res.status(201).send(`POST /admin/users on Admin API : Created User with ID ${addedUser.id}`);
 };
 
-//@desc Get user with id from database
-//@route GET /users/:id
+//@desc Get User with id from database
+//@route GET /admin/users/:id
 //@access public
 const getUser = async (req,res) => {
     //Retreive Field id from req.params JSON Object
@@ -78,7 +78,7 @@ const getUser = async (req,res) => {
     //Querry One User with id
     const user = await UserModel.findOne({
         where: {id: id},
-        attributes: ['id','first_name','last_name','email']
+        attributes: ['id','first_name','last_name','email','role']
     });
 
     //Check if User Found
@@ -87,11 +87,11 @@ const getUser = async (req,res) => {
         throw new Error("Unregistered User");
     };
 
-    res.status(200).send(`GET /users/${id} on User API : Fetched User : ${JSON.stringify(user, null, 2)}`);
+    res.status(200).send(`GET /admin/users/${id} on Admin API : Fetched User : ${JSON.stringify(user, null, 2)}`);
 };
 
-//@desc Update user with id in database
-//@route PATCH /users/:id
+//@desc Update User with id in database
+//@route PATCH /admin/users/:id
 //@access public
 const updateUser = async (req,res) => {
     //Retreive Field id from req.params JSON Object
@@ -120,11 +120,11 @@ const updateUser = async (req,res) => {
     //Apply Any Changes
     await user.save();
 
-    res.status(200).send(`PATCH /users/${id} on User API : Update Done`);
+    res.status(200).send(`PATCH /admin/users/${id} on Admin API : Update Done`);
 };
 
-//@desc Delete users with id from database
-//@route DELETE /users/:id
+//@desc Delete User with id from database
+//@route DELETE /admin/users/:id
 //@access public
 const deleteUser = async (req,res) => {
     //Retreive Field id from req.params JSON Object
@@ -135,7 +135,7 @@ const deleteUser = async (req,res) => {
         where: {id: id}
     });
 
-    res.status(200).send(`DELETE /users/${id} on User API : Deleted User`);
+    res.status(200).send(`DELETE /admin/users/${id} on Admin API : Deleted User`);
 };
 
 //Authorize other Modules to make use of Callbacks defined here
