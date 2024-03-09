@@ -9,6 +9,7 @@
 
 //These Functions should all be On Routes to Authenticate User
 //If User Authentication fails somewhere in App, They are taken to Login Page and Therefor Function defined Here for Login is Called
+const CustomError = require('../config/CustomError.js');
 const passportSet = require('../config/passport-setup.js');
 const bcrypt = require('bcrypt');
 const UserModel = require('../models/UserModel.js');
@@ -18,7 +19,7 @@ const UserModel = require('../models/UserModel.js');
 //@access public
 const getAuthRedirectLogin = (req,res) => {
     //Login Form
-    res.redirect('/auth/login');
+    return res.redirect('/auth/login');
 };
 
 //@desc Get Login Form for Authentication
@@ -75,8 +76,7 @@ const postRegistrationForm = async (req,res) => {
     
     //Check all needed Fields are here
     if(!formUser.first_name || !formUser.last_name || !formUser.email || !formUser.password){
-        res.status(400);
-        throw new Error("Could not proceed : Missing Value");
+        return next(CustomError.badRequest("Could not proceed : Missing Value"));
     };
 
     //Take and Hash Password
@@ -93,8 +93,7 @@ const postRegistrationForm = async (req,res) => {
 
     //Check if somehow User Undefined
     if(!addedUser){
-        res.status(500);
-        throw new Error("Error : Something Happened");
+        next(CustomError.serverError("Error : Something Happened"));
     };
 
     res.status(201).send(`POST auth/registration : Created User with ID ${addedUser.id}`);

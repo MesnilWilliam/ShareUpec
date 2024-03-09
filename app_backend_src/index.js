@@ -109,7 +109,7 @@ app.use('/dashboard',dashboardRouter);
 app.use('/admin',adminRouter);
 
 //MIddleWare for Error
-//app.use(errorHandler);
+app.use(errorHandler);
 
 const PORT = process.env.SERVER_PORT || 4000;
 //Starting API Server

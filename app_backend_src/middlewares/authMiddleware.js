@@ -7,7 +7,7 @@ const checkAuthenticated = (req,res,next) => {
     if(req.isAuthenticated()){
         return next();
     }
-    res.redirect('/auth/login');
+    return res.redirect('/auth/login');
 }
 
 //Allow Check Auth And Admin
@@ -19,7 +19,7 @@ const checkAdmin = async (req,res,next) => {
             return next();
         }
     }
-    res.redirect('/auth/login');
+    return res.redirect('/auth/login');
 }
 
 module.exports = {

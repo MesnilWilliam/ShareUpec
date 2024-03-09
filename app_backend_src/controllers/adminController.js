@@ -8,6 +8,7 @@
 
 //Import BCrypt for Password Hashing
 //Import UserModel for Database Interactions
+const CustomError = require('../config/CustomError.js');
 const bcrypt = require('bcrypt');
 const UserModel = require('../models/UserModel.js');
 const dotenv = require('dotenv');
@@ -16,7 +17,7 @@ dotenv.config();
 //@desc Get Users from database
 //@route GET /admin/users
 //@access public
-const getUsers = async (req,res) => {
+const getUsers = async (req,res,next) => {
     //Querry all Users
     const users = await UserModel.findAll({
         order: [['last_name','ASC']],
@@ -25,8 +26,7 @@ const getUsers = async (req,res) => {
 
     //Check if somehow Users Undefined
     if(!users){
-        res.status(500);
-        throw new Error("Error : Something Happened");
+        return next(CustomError.serverError('Something Happened'));
     };
     
     res.status(200).send(`GET /admin/users on Admin API : Fetched Users : ${JSON.stringify(users, null, 2)}`);
@@ -35,7 +35,7 @@ const getUsers = async (req,res) => {
 //@desc Create and add User to database
 //@route POST /admin/users
 //@access public
-const createUser = async (req,res) => {
+const createUser = async (req,res,next) => {
     //Retreive Request Body data
     const formUser = {
         ...req.body
@@ -43,8 +43,7 @@ const createUser = async (req,res) => {
     
     //Check all needed Fields are here
     if(!formUser.first_name || !formUser.last_name || !formUser.email || !formUser.password){
-        res.status(400);
-        throw new Error("Could not proceed : Missing Value");
+        return next(CustomError.badRequest("Could not proceed : Missing Value"));
     };
 
     //Take and Hash Password
@@ -61,8 +60,7 @@ const createUser = async (req,res) => {
 
     //Check if somehow User Undefined
     if(!addedUser){
-        res.status(500);
-        throw new Error("Error : Something Happened");
+        return next(CustomError.serverError("Error : Something Happened"));
     };
 
     res.status(201).send(`POST /admin/users on Admin API : Created User with ID ${addedUser.id}`);
@@ -71,7 +69,7 @@ const createUser = async (req,res) => {
 //@desc Get User with id from database
 //@route GET /admin/users/:id
 //@access public
-const getUser = async (req,res) => {
+const getUser = async (req,res,next) => {
     //Retreive Field id from req.params JSON Object
     const {id} = req.params;
 
@@ -83,8 +81,7 @@ const getUser = async (req,res) => {
 
     //Check if User Found
     if(!user){
-        res.status(404);
-        throw new Error("Unregistered User");
+        return next(CustomError.notFound("Unregistered User"));
     };
 
     res.status(200).send(`GET /admin/users/${id} on Admin API : Fetched User : ${JSON.stringify(user, null, 2)}`);
@@ -93,7 +90,7 @@ const getUser = async (req,res) => {
 //@desc Update User with id in database
 //@route PATCH /admin/users/:id
 //@access public
-const updateUser = async (req,res) => {
+const updateUser = async (req,res,next) => {
     //Retreive Field id from req.params JSON Object
     const {id} = req.params;
 
@@ -108,8 +105,7 @@ const updateUser = async (req,res) => {
 
     //Check if User Found
     if(!user){
-        res.status(404);
-        throw new Error("Unregistered User");
+        return next(CustomError.notFound("Unregistered User"));
     };
 
     //If Field Set, apply change
