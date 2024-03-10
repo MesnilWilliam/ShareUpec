@@ -6,6 +6,9 @@
 //req.body should be Parsed JSON when Use BodyParser.json as MiddleWare
 //req.params is JSON Object with Field from URL
 
+//Build Response JSON
+const jsonBuilder = require('../utils/jsonBuilder.js');
+
 //Import BCrypt for Password Hashing
 //Import UserModel for Database Interactions
 const CustomError = require('../config/CustomError.js');
@@ -29,7 +32,8 @@ const getUsers = async (req,res,next) => {
         return next(CustomError.serverError('Something Happened'));
     };
     
-    res.status(200).send(`GET /admin/users on Admin API : Fetched Users : ${JSON.stringify(users, null, 2)}`);
+    const jsonResponse = jsonBuilder.simpleResponse(req.originalUrl,JSON.stringify(users, null, 2));
+    res.status(200).json(jsonResponse);
 };
 
 //@desc Create and add User to database
@@ -63,7 +67,8 @@ const createUser = async (req,res,next) => {
         return next(CustomError.serverError("Error : Something Happened"));
     };
 
-    res.status(201).send(`POST /admin/users on Admin API : Created User with ID ${addedUser.id}`);
+    const jsonResponse = jsonBuilder.simpleResponse(req.originalUrl,`POST /admin/users on Admin API : Created User with ID ${addedUser.id}`);
+    res.status(201).json(jsonResponse);
 };
 
 //@desc Get User with id from database
@@ -84,7 +89,8 @@ const getUser = async (req,res,next) => {
         return next(CustomError.notFound("Unregistered User"));
     };
 
-    res.status(200).send(`GET /admin/users/${id} on Admin API : Fetched User : ${JSON.stringify(user, null, 2)}`);
+    const jsonResponse = jsonBuilder.simpleResponse(req.originalUrl,JSON.stringify(user, null, 2));
+    res.status(200).json(jsonResponse);
 };
 
 //@desc Update User with id in database
@@ -116,7 +122,8 @@ const updateUser = async (req,res,next) => {
     //Apply Any Changes
     await user.save();
 
-    res.status(200).send(`PATCH /admin/users/${id} on Admin API : Update Done`);
+    const jsonResponse = jsonBuilder.simpleResponse(req.originalUrl,`PATCH /admin/users/${id} on Admin API : Update Done`);
+    res.status(200).json(jsonResponse);
 };
 
 //@desc Delete User with id from database
@@ -131,7 +138,8 @@ const deleteUser = async (req,res) => {
         where: {id: id}
     });
 
-    res.status(200).send(`DELETE /admin/users/${id} on Admin API : Deleted User`);
+    const jsonResponse = jsonBuilder.simpleResponse(req.originalUrl,`DELETE /admin/users/${id} on Admin API : Deleted User`);
+    res.status(204).json(jsonResponse);
 };
 
 //Authorize other Modules to make use of Callbacks defined here

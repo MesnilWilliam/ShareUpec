@@ -6,18 +6,23 @@
 //req.body should be Parsed JSON when Use BodyParser.json as MiddleWare
 //req.params is JSON Object with Field from URL
 
+//Build Response JSON
+const jsonBuilder = require('../utils/jsonBuilder.js');
+
 //@desc Home Page
 //@route GET /
 //@access public
 const getHome = (req,res) => {
-    res.status(200).send("API ROOT : TRY SOMETHING FROM HERE");
+    const jsonResponse = jsonBuilder.simpleResponse(req.originalUrl,"API ROOT : TRY SOMETHING FROM HERE");
+    res.status(200).json(jsonResponse);
 };
 
 //@desc About Page
 //@route GET /about
 //@access public
 const getAbout = (req,res) => {
-    res.status(200).send("Made for : UPEC | Made by : WM and MR | Made on : February 2024");
+    const jsonResponse = jsonBuilder.simpleResponse(req.originalUrl,"Made for : UPEC | Made by : WM and MR | Made on : February 2024");
+    res.status(200).json(jsonResponse);
 };
 
 //Authorize other Modules to make use of Callbacks defined here
