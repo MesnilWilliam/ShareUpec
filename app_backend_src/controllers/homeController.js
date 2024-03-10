@@ -1,5 +1,5 @@
-//Controller for using Users Router
-//Callbacks of Users Routes are defined using Arrow Syntax for readability
+//Controller for using Home Router
+//Callbacks of Home Routes are defined using Arrow Syntax for readability
 //Use JSON.stringify(Onject) to Print JSON for Console LOG
 
 //Assume in Following Functions

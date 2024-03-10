@@ -1,5 +1,5 @@
-//Controller for using Users Router
-//Callbacks of Users Routes are defined using Arrow Syntax for readability
+//Controller for using Admin Router
+//Callbacks of Admin Routes are defined using Arrow Syntax for readability
 //Use JSON.stringify(Onject) to Print JSON for Console LOG
 
 //Assume in Following Functions
@@ -8,13 +8,16 @@
 
 //Import BCrypt for Password Hashing
 //Import UserModel for Database Interactions
+const CustomError = require('../config/CustomError.js');
 const bcrypt = require('bcrypt');
 const UserModel = require('../models/UserModel.js');
+const dotenv = require('dotenv');
+dotenv.config();
 
-//@desc Get users from database
-//@route GET /users
+//@desc Get Users from database
+//@route GET /admin/users
 //@access public
-const getUsers = async (req,res) => {
+const getUsers = async (req,res,next) => {
     //Querry all Users
     const users = await UserModel.findAll({
         order: [['last_name','ASC']],
@@ -23,17 +26,16 @@ const getUsers = async (req,res) => {
 
     //Check if somehow Users Undefined
     if(!users){
-        res.status(500);
-        throw new Error("Error : Something Happened");
+        return next(CustomError.serverError('Something Happened'));
     };
     
-    res.status(200).send(`GET /users on User API : Fetched Users : ${JSON.stringify(users, null, 2)}`);
+    res.status(200).send(`GET /admin/users on Admin API : Fetched Users : ${JSON.stringify(users, null, 2)}`);
 };
 
-//@desc Create and add user to database
-//@route POST /users
+//@desc Create and add User to database
+//@route POST /admin/users
 //@access public
-const createUser = async (req,res) => {
+const createUser = async (req,res,next) => {
     //Retreive Request Body data
     const formUser = {
         ...req.body
@@ -41,13 +43,12 @@ const createUser = async (req,res) => {
     
     //Check all needed Fields are here
     if(!formUser.first_name || !formUser.last_name || !formUser.email || !formUser.password){
-        res.status(400);
-        throw new Error("Could not proceed : Missing Value");
+        return next(CustomError.badRequest("Could not proceed : Missing Value"));
     };
 
     //Take and Hash Password
-    const saltRound = 10;
-    const hashedPassword = await bcrypt.hash(formUser.password,saltRound);
+    const saltRounds = (process.env.BCRYPT_SALT_ROUNDS ? parseInt(process.env.BCRYPT_SALT_ROUNDS) : 10);
+    const hashedPassword = await bcrypt.hash(formUser.password,saltRounds);
 
     //Only use Needed Fields to let AutoGen Fill ID and then some
     const addedUser = await UserModel.create({
@@ -59,39 +60,37 @@ const createUser = async (req,res) => {
 
     //Check if somehow User Undefined
     if(!addedUser){
-        res.status(500);
-        throw new Error("Error : Something Happened");
+        return next(CustomError.serverError("Error : Something Happened"));
     };
 
-    res.status(201).send(`POST /users on User API : Created User with ID ${addedUser.id}`);
+    res.status(201).send(`POST /admin/users on Admin API : Created User with ID ${addedUser.id}`);
 };
 
-//@desc Get user with id from database
-//@route GET /users/:id
+//@desc Get User with id from database
+//@route GET /admin/users/:id
 //@access public
-const getUser = async (req,res) => {
+const getUser = async (req,res,next) => {
     //Retreive Field id from req.params JSON Object
     const {id} = req.params;
 
     //Querry One User with id
     const user = await UserModel.findOne({
         where: {id: id},
-        attributes: ['id','first_name','last_name','email']
+        attributes: ['id','first_name','last_name','email','role']
     });
 
     //Check if User Found
     if(!user){
-        res.status(404);
-        throw new Error("Unregistered User");
+        return next(CustomError.notFound("Unregistered User"));
     };
 
-    res.status(200).send(`GET /users/${id} on User API : Fetched User : ${JSON.stringify(user, null, 2)}`);
+    res.status(200).send(`GET /admin/users/${id} on Admin API : Fetched User : ${JSON.stringify(user, null, 2)}`);
 };
 
-//@desc Update user with id in database
-//@route PATCH /users/:id
+//@desc Update User with id in database
+//@route PATCH /admin/users/:id
 //@access public
-const updateUser = async (req,res) => {
+const updateUser = async (req,res,next) => {
     //Retreive Field id from req.params JSON Object
     const {id} = req.params;
 
@@ -106,8 +105,7 @@ const updateUser = async (req,res) => {
 
     //Check if User Found
     if(!user){
-        res.status(404);
-        throw new Error("Unregistered User");
+        return next(CustomError.notFound("Unregistered User"));
     };
 
     //If Field Set, apply change
@@ -118,11 +116,11 @@ const updateUser = async (req,res) => {
     //Apply Any Changes
     await user.save();
 
-    res.status(200).send(`PATCH /users/${id} on User API : Update Done`);
+    res.status(200).send(`PATCH /admin/users/${id} on Admin API : Update Done`);
 };
 
-//@desc Delete users with id from database
-//@route DELETE /users/:id
+//@desc Delete User with id from database
+//@route DELETE /admin/users/:id
 //@access public
 const deleteUser = async (req,res) => {
     //Retreive Field id from req.params JSON Object
@@ -133,7 +131,7 @@ const deleteUser = async (req,res) => {
         where: {id: id}
     });
 
-    res.status(200).send(`DELETE /users/${id} on User API : Deleted User`);
+    res.status(200).send(`DELETE /admin/users/${id} on Admin API : Deleted User`);
 };
 
 //Authorize other Modules to make use of Callbacks defined here

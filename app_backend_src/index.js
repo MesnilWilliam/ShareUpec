@@ -31,22 +31,32 @@
 
 //Imports from Node Modules
 //Express is FrameWork for App, quite some MiddleWares and Routers
+//Passport, Strategy and Express-Session are for Auth and Cookies Manadgment
+//Strategy Authenticate User using predetermined Strategy : Match Login/Password against DB, Connect to Third Party Account
+//Passport rely on Express-Session to maintain the Session in req.session with Cookies
+//Helmet is basic security FrameWork : Check for XSS, Hide Headers as PoweredBy
 //CORS is Cross Origin Ressource Sharing, for accessing some URL from any other site
 //BodyParser is conveinant way to get Body of HTTP POST Request
 //DotEnv is Utility for Configuration from an Environment File
 //Winston is Logger for Error, Warning and Info
 //For Unique ID : Refer to https://www.npmjs.com/package/uuid
 const express = require('express');
+const express_session = require('express-session');
+const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 dotenv.config();
 const app = express();
 
 //Imports from Project
+const passportSet = require('./config/passport-setup.js');
 const databaseSequelizeConnexion = require('./database/databaseConnexion.js');
 const UserModel = require('./models/UserModel.js');
 const homeRouter = require('./routes/homeRouter.js');
-const usersRouter = require('./routes/usersRouter.js');
+const authRouter = require('./routes/authRouter.js');
+const dashboardRouter = require('./routes/dashboardRouter.js');
+const adminRouter = require('./routes/adminRouter.js');
+const checkAuthenticated = require('./middlewares/authMiddleware.js');
 const errorHandler = require('./middlewares/errorHandler.js');
 
 //MiddleWares
@@ -57,10 +67,25 @@ const errorHandler = require('./middlewares/errorHandler.js');
 //Chaining MiddleWares is done using the next() function, Calling next MiddleWare relevent for requested URL
 //For writing MiddleWare, refer to https://expressjs.com/en/guide/writing-middleware.html
 
-//MiddleWare for ALL PRE Routes
+//MiddleWare than should be executed at the beginning of each Route
+//Express Session : HTTP Session for Logged Client, used to manage Cookies encrypted with Secret and by default with expiration up to the Browser
+//Passport put Authenticated User in req.session relying on express-session
+//Passport can access the HTTP req and set req.user by calling initialize() then authenticate('session')
 //BodyParser.json Parse the Body of Incoming HTTP Request from Clients to JSON Format
 //This means Our Server only expect JSON as Client Data
+app.use(helmet());
 app.use(bodyParser.json());
+app.use(express_session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        maxAge : 8 * 60 * 60 * 1000
+    }
+}));
+app.use(passportSet.initialize());
+app.use(passportSet.authenticate('session'));
 
 //Routes
 //Routes need declaration of HTTP Method, URL and Callback
@@ -76,10 +101,14 @@ app.use(bodyParser.json());
 
 //Routes for HomePage
 app.use('/',homeRouter);
-//Routes for Users
-app.use('/users',usersRouter);
+//Routes for Authentication
+app.use('/auth',authRouter);
+//Routes for User Dashboard
+app.use('/dashboard',dashboardRouter);
+//Routes for Admin
+app.use('/admin',adminRouter);
 
-//MIddleWare for ALL POST Routes
+//MIddleWare for Error
 app.use(errorHandler);
 
 const PORT = process.env.SERVER_PORT || 4000;
@@ -88,6 +117,24 @@ app.listen(PORT, () => {
     console.log(`Node API Running On http://localhost:${PORT}`);
 });
 
-//Authentification : https://morioh.com/a/ae5f6016ec06/creez-des-api-dauthentification-des-utilisateurs-a-laide-de-nodejs-express-et-mysql
+//Authentification : https://medium.com/@prashantramnyc/node-js-with-passport-authentication-simplified-76ca65ee91e5
+//Local/JWT : https://www.youtube.com/playlist?list=PLYQSCk-qyTW2ewJ05f_GKHtTIzjynDgjK
+//OAuth : https://www.youtube.com/playlist?list=PL4cUxeGkcC9jdm7QX143aMLAqyM-jTZ2x
 //Tutorial NODE : https://www.youtube.com/watch?v=Oe421EPjeBE
 //TypeScript IS Better : https://github.com/ljlm0402/typescript-express-starter
+
+//Passport and Strategy are used for Session and Authentication
+//Passport help the already Authenticated User use a Session with the Server
+//Strategy help Authenticate the User
+
+//Passport is Initialized for all routes as the function passport.deserialiseUser() use Cookie previously sent to Client in order put data in req.user
+
+//req.isAuthenticated() check if User alread Loged by passport.authenticate() and so field req.session.passport.user is defined
+
+//passport.serializeUser() is called by done() of Strategy Authenticate Function used in passport.authenticate() and Add User Object with the Serialized Properties to req.session.passport.user
+//passport.serializeUser() creates a Field passport in the Cookie that is sent diretly to the Client by calling done(null,Object)
+
+//passport.deserializeUser() is called when querying any route and place content of req.session.passport.user in req.user if there is User Connected
+//passport.deserializeUser() check Cookie received from Client and get data with Cookie Session ID
+
+//Using serialize and deserialize allow Cookie to travel with Our User Info Server>Client then Client>Server
