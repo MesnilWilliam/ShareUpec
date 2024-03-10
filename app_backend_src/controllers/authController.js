@@ -7,6 +7,9 @@
 //req.params is JSON Object with Field from URL
 //req.user will be defined by Passport
 
+//Build Response JSON
+const jsonBuilder = require('../utils/jsonBuilder.js');
+
 //These Functions should all be On Routes to Authenticate User
 //If User Authentication fails somewhere in App, They are taken to Login Page and Therefor Function defined Here for Login is Called
 const CustomError = require('../config/CustomError.js');
@@ -27,7 +30,8 @@ const getAuthRedirectLogin = (req,res) => {
 //@access public
 const getLoginForm = (req,res) => {
     //Display Login Form
-    res.status(200).send("Please fill the login form");
+    const jsonResponse = jsonBuilder.simpleResponse(req.originalUrl,"Please fill the login form");
+    res.status(200).json(jsonResponse);
 };
 
 //@desc Post Login Form Data and Try Authentication
@@ -53,7 +57,7 @@ const postLogout = (req,res,next) => {
         if(err){
             return next(err);
         }
-        res.redirect('/');
+        return res.redirect('/');
     });
 }
 
@@ -62,7 +66,8 @@ const postLogout = (req,res,next) => {
 //@access public
 const getRegistrationForm = (req,res) => {
     //Display Registration Form
-    res.status(200).send("Please fill the registration form");
+    const jsonResponse = jsonBuilder.simpleResponse(req.originalUrl,"Please fill the registration form");
+    res.status(200).json(jsonResponse);
 };
 
 //@desc Post Registration Form Data and Try Creation of New User in Database
@@ -93,10 +98,11 @@ const postRegistrationForm = async (req,res) => {
 
     //Check if somehow User Undefined
     if(!addedUser){
-        next(CustomError.serverError("Error : Something Happened"));
+        return next(CustomError.serverError("Error : Something Happened"));
     };
 
-    res.status(201).send(`POST auth/registration : Created User with ID ${addedUser.id}`);
+    const jsonResponse = jsonBuilder.simpleResponse(req.originalUrl,`POST auth/registration : Created User with ID ${addedUser.id}`);
+    res.status(201).json(jsonResponse);
 };
 
 //Authorize other Modules to make use of Callbacks defined here
