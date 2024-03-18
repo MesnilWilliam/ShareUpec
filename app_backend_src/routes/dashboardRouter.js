@@ -11,4 +11,10 @@ dashboardRouter.route('/').get(authMiddleware.checkAuthenticated,dashboardContro
 //User Profile
 dashboardRouter.route('/profile').get(authMiddleware.checkAuthenticated,dashboardController.getProfile);
 
+//Update User Profile
+dashboardRouter.route('/profile/update').patch(authMiddleware.checkAuthenticated,dashboardController.updateLoggedUser);
+
+//Delete User Profile
+dashboardRouter.route('/profile/delete').delete(authMiddleware.checkAuthenticated,dashboardController.deleteLoggedUser);
+
 module.exports = dashboardRouter;

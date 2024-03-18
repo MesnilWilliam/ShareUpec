@@ -55,8 +55,9 @@ const dbModels = require('./models');
 const homeRouter = require('./routes/homeRouter.js');
 const authRouter = require('./routes/authRouter.js');
 const dashboardRouter = require('./routes/dashboardRouter.js');
+const coursesRouter = require('./routes/coursesRouter.js');
 const adminRouter = require('./routes/adminRouter.js');
-const checkAuthenticated = require('./middlewares/authMiddleware.js');
+const authMiddleware = require('./middlewares/authMiddleware.js');
 const errorHandler = require('./middlewares/errorHandler.js');
 
 //MiddleWares
@@ -105,6 +106,8 @@ app.use('/',homeRouter);
 app.use('/auth',authRouter);
 //Routes for User Dashboard
 app.use('/dashboard',dashboardRouter);
+//Routes for Courses
+app.use('/courses',coursesRouter);
 //Routes for Admin
 app.use('/admin',adminRouter);
 
@@ -141,3 +144,5 @@ app.listen(PORT, () => {
 
 //Read File : https://nodejs.org/en/learn/manipulating-files/reading-files-with-nodejs
 //Read Image : https://gist.github.com/MarkoCen/0ee9437439e00e313926
+
+//TODO : Add Utility to check parameters type and cast or throw error as necessary

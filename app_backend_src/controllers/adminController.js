@@ -14,6 +14,7 @@ const jsonBuilder = require('../utils/jsonBuilder.js');
 const CustomError = require('../config/CustomError.js');
 const bcrypt = require('bcrypt');
 const UserModel = require('../models/UserModel.js');
+const parameterValidator = require('../utils/parameterValidator.js');
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -50,6 +51,11 @@ const createUser = async (req,res,next) => {
         return next(CustomError.badRequest("Could not proceed : Missing Value"));
     };
 
+    //Check Email Format
+    if(!parameterValidator.isEmailValid(formUser.email)){
+        return next(CustomError.badRequest("Could not proceed : Invalid Email"));
+    }
+
     //Take and Hash Password
     const saltRounds = (process.env.BCRYPT_SALT_ROUNDS ? parseInt(process.env.BCRYPT_SALT_ROUNDS) : 10);
     const hashedPassword = await bcrypt.hash(formUser.password,saltRounds);
@@ -72,16 +78,21 @@ const createUser = async (req,res,next) => {
 };
 
 //@desc Get User with id from database
-//@route GET /admin/users/:id
+//@route GET /admin/users/:user_id
 //@access public
 const getUser = async (req,res,next) => {
-    //Retreive Field id from req.params JSON Object
-    const {id} = req.params;
+    //Retreive Field user_id from req.params JSON Object
+    const {user_id} = req.params;
+
+    //Check user_id Numerical Value
+    if(!parameterValidator.isResolvableToNumber(user_id)){
+        return next(CustomError.badRequest("Could not proceed : Invalid User ID"));
+    }
 
     //Querry One User with id
     const user = await UserModel.findOne({
-        where: {id: id},
-        attributes: ['id','first_name','last_name','email','role']
+        where: {id: user_id},
+        attributes: ['id','first_name','last_name','email','password','role']
     });
 
     //Check if User Found
@@ -94,11 +105,16 @@ const getUser = async (req,res,next) => {
 };
 
 //@desc Update User with id in database
-//@route PATCH /admin/users/:id
+//@route PATCH /admin/users/:user_id
 //@access public
 const updateUser = async (req,res,next) => {
-    //Retreive Field id from req.params JSON Object
-    const {id} = req.params;
+    //Retreive Field user_id from req.params JSON Object
+    const {user_id} = req.params;
+
+    //Check user_id Numerical Value
+    if(!parameterValidator.isResolvableToNumber(user_id)){
+        return next(CustomError.badRequest("Could not proceed : Invalid User ID"));
+    }
 
     //Get potential Fields to Change
     const {first_name,last_name,email} = req.body;
@@ -106,7 +122,7 @@ const updateUser = async (req,res,next) => {
     //Querry One User with id
     //As Update, Querry ALL Fields : Can be further secured
     const user = await UserModel.findOne({
-        where: {id: id}
+        where: {id: user_id}
     });
 
     //Check if User Found
@@ -117,28 +133,33 @@ const updateUser = async (req,res,next) => {
     //If Field Set, apply change
     if(first_name) user.first_name = first_name;
     if(last_name) user.last_name = last_name;
-    if(email) user.email = email;
+    if(parameterValidator.isEmailValid(email)) user.email = email;
 
     //Apply Any Changes
     await user.save();
 
-    const jsonResponse = jsonBuilder.simpleResponse(req.originalUrl,`PATCH /admin/users/${id} on Admin API : Update Done`);
+    const jsonResponse = jsonBuilder.simpleResponse(req.originalUrl,`PATCH /admin/users/${user_id} on Admin API : Update Done`);
     res.status(200).json(jsonResponse);
 };
 
 //@desc Delete User with id from database
-//@route DELETE /admin/users/:id
+//@route DELETE /admin/users/:user_id
 //@access public
 const deleteUser = async (req,res) => {
-    //Retreive Field id from req.params JSON Object
-    const {id} = req.params;
+    //Retreive Field user_id from req.params JSON Object
+    const {user_id} = req.params;
+
+    //Check user_id Numerical Value
+    if(!parameterValidator.isResolvableToNumber(user_id)){
+        return next(CustomError.badRequest("Could not proceed : Invalid User ID"));
+    }
 
     //Remove One User with id
     await UserModel.destroy({
-        where: {id: id}
+        where: {id: user_id}
     });
 
-    const jsonResponse = jsonBuilder.simpleResponse(req.originalUrl,`DELETE /admin/users/${id} on Admin API : Deleted User`);
+    const jsonResponse = jsonBuilder.simpleResponse(req.originalUrl,`DELETE /admin/users/${user_id} on Admin API : Deleted User`);
     res.status(204).json(jsonResponse);
 };
 
