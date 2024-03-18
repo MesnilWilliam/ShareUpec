@@ -30,7 +30,7 @@
 //Destructuring Assessment : https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
 
 //Imports from Node Modules
-//Express is FrameWork for App, quite some MiddleWares and Routers
+//Express is FrameWork for App, allowing some MiddleWares and Routers
 //Passport, Strategy and Express-Session are for Auth and Cookies Manadgment
 //Strategy Authenticate User using predetermined Strategy : Match Login/Password against DB, Connect to Third Party Account
 //Passport rely on Express-Session to maintain the Session in req.session with Cookies
@@ -51,12 +51,13 @@ const app = express();
 //Imports from Project
 const passportSet = require('./config/passport-setup.js');
 const databaseSequelizeConnexion = require('./database/databaseConnexion.js');
-const UserModel = require('./models/UserModel.js');
+const dbModels = require('./models');
 const homeRouter = require('./routes/homeRouter.js');
 const authRouter = require('./routes/authRouter.js');
 const dashboardRouter = require('./routes/dashboardRouter.js');
+const coursesRouter = require('./routes/coursesRouter.js');
 const adminRouter = require('./routes/adminRouter.js');
-const checkAuthenticated = require('./middlewares/authMiddleware.js');
+const authMiddleware = require('./middlewares/authMiddleware.js');
 const errorHandler = require('./middlewares/errorHandler.js');
 
 //MiddleWares
@@ -105,6 +106,8 @@ app.use('/',homeRouter);
 app.use('/auth',authRouter);
 //Routes for User Dashboard
 app.use('/dashboard',dashboardRouter);
+//Routes for Courses
+app.use('/courses',coursesRouter);
 //Routes for Admin
 app.use('/admin',adminRouter);
 
@@ -138,3 +141,8 @@ app.listen(PORT, () => {
 //passport.deserializeUser() check Cookie received from Client and get data with Cookie Session ID
 
 //Using serialize and deserialize allow Cookie to travel with Our User Info Server>Client then Client>Server
+
+//Read File : https://nodejs.org/en/learn/manipulating-files/reading-files-with-nodejs
+//Read Image : https://gist.github.com/MarkoCen/0ee9437439e00e313926
+
+//TODO : Add Utility to check parameters type and cast or throw error as necessary

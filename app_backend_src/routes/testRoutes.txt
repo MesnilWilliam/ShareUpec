@@ -1,0 +1,60 @@
+Page Principale : localhost:4000/
+
+Page Enregistrement : localhost:4000/auth/registration
+
+{
+    "first_name":"name",
+    "last_name":"name",
+    "email":"name.name@gmail.com",
+    "password":"password",
+    "confirmPassword":"password"
+}
+
+Page Authentication : localhost:4000/auth/login
+
+{
+    "email":"name.name@gmail.com",
+    "password":"password"
+}
+
+Page Dashboard : localhost:4000/dashboard
+
+Page Profile : localhost:4000/dashboard/profile
+
+Page Courses Dashboard : localhost:4000/courses
+
+Page Courses Toutes : localhost:4000/courses/all
+
+Page Courses Inscrit : localhost:4000/courses/my/enrolled et localhost:4000/courses/my/enrollments/all
+
+Page Courses Donnees : localhost:4000/courses/my/owned
+
+Page Courses Token : localhost:4000/courses/token/:token
+
+Page Courses Creer : localhost:4000/courses/my/create
+
+{
+    "name":"name",
+    "cycle":"cycle"
+}
+
+Page Course : localhost:4000/courses/:course_id
+
+Page Files Course Toutes : localhost:4000/courses/:course_id/files
+
+Page Files Course Ajouter : localhost:4000/courses/:course_id/files/add
+
+{
+    "name":"name",
+    "extension":"extension",
+    "link":"https://link.extension",
+    "binary":"binary"
+}
+
+Page File Course : localhost:4000/courses/:course_id/files/:file_id
+
+Page File Course Download : localhost:4000/courses/:course_id/files/:file_id/download
+
+Page Enrolleds Ajouter : localhost:4000/courses/my/enrollments/enroll/:course_id
+
+Page Deconnexion : localhost:4000/logout

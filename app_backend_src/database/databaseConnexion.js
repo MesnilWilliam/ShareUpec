@@ -19,3 +19,17 @@ const databaseSequelizeConnexion = new Sequelize(process.env.PG_DATABASE,
     });
 
 module.exports = databaseSequelizeConnexion;
+
+//DataBase Representation
+/*
+USER: user_id [BIGINT], first_name [VARCHAR(100)], last_name [VARCHAR(100)], 1_email [VARCHAR(300)], password [VARCHAR(100)], role[SMALLINT], share_code [UUID], created_at [DATE], updated_at [DATE]
+
+ENROLLED, 0N USER, 0N COURSE
+:
+MANAGE, 0N USER, 11 COURSE
+
+:
+COURSE: course_id [INT], name [VARCHAR(100)], cycle [ENUM('L1','L2','L3','M1','M2')], created_at [DATE], updated_at [DATE]
+CONTAINS, 11 FILE, 0N COURSE
+FILE: file_id [INT], name [VARCHAR(100)], extension [ENUM('pdf','png','jpg')], link [VARCHAR(500)], binary [BLOB], created_at [DATE], updated_at [DATE]
+*/

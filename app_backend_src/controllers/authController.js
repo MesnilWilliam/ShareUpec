@@ -16,6 +16,7 @@ const CustomError = require('../config/CustomError.js');
 const passportSet = require('../config/passport-setup.js');
 const bcrypt = require('bcrypt');
 const UserModel = require('../models/UserModel.js');
+const parameterValidator = require('../utils/parameterValidator.js');
 
 //@desc Get Redirected to Login Page for Authentication
 //@route GET /auth
@@ -73,16 +74,26 @@ const getRegistrationForm = (req,res) => {
 //@desc Post Registration Form Data and Try Creation of New User in Database
 //@route POST /auth/registration
 //@access public
-const postRegistrationForm = async (req,res) => {
+const postRegistrationForm = async (req,res,next) => {
     //Retreive Request Body data
     const formUser = {
         ...req.body
     };
     
     //Check all needed Fields are here
-    if(!formUser.first_name || !formUser.last_name || !formUser.email || !formUser.password){
+    if(!formUser.first_name || !formUser.last_name || !formUser.email || !formUser.password || !formUser.confirmPassword){
         return next(CustomError.badRequest("Could not proceed : Missing Value"));
     };
+
+    //Check Email Format
+    if(!parameterValidator.isEmailValid(formUser.email)){
+        return next(CustomError.badRequest("Could not proceed : Invalid Email"));
+    }
+
+    //Check Password Confirm
+    if(formUser.password != formUser.confirmPassword){
+        return next(CustomError.badRequest("Could not proceed : Password Mismatch"));
+    }
 
     //Take and Hash Password
     const saltRounds = (process.env.BCRYPT_SALT_ROUNDS ? parseInt(process.env.BCRYPT_SALT_ROUNDS) : 10);

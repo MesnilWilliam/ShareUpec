@@ -11,12 +11,12 @@ adminRouter.route('/users').get(authMiddleware.checkAdmin,adminController.getUse
 adminRouter.route('/users').post(authMiddleware.checkAdmin,adminController.createUser);
 
 //Get User by ID
-adminRouter.route('/users/:id').get(authMiddleware.checkAdmin,adminController.getUser);
+adminRouter.route('/users/:user_id').get(authMiddleware.checkAdmin,adminController.getUser);
 
 //Update User by ID
-adminRouter.route('/users/:id').patch(authMiddleware.checkAdmin,adminController.updateUser);
+adminRouter.route('/users/:user_id').patch(authMiddleware.checkAdmin,adminController.updateUser);
 
 //Delete User by ID
-adminRouter.route(`/users/:id`).delete(authMiddleware.checkAdmin,adminController.deleteUser);
+adminRouter.route(`/users/:user_id`).delete(authMiddleware.checkAdmin,adminController.deleteUser);
 
 module.exports = adminRouter;
