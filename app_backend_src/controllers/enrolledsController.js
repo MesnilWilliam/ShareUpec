@@ -48,15 +48,24 @@ const addLoggedUserEnrollment = async (req,res,next) => {
 //@route GET /courses/my/enrollments/all
 //@access public
 const getLoggedUserEnrollments = async (req,res,next) => {
+    //Querry all CoursesID User Enrolled In
+    const enrolledPairs = await EnrolledModel.findAll({
+        where: {user_id: req.user.id}
+    });
+
+    //Check if somehow Enrolled Courses Undefined
+    if(!enrolledPairs){
+        return next(CustomError.serverError('Something Happened'));
+    };
+
+    var coursesID = [];
+    for(enrolledPair of enrolledPairs){
+        coursesID.push(enrolledPair.course_id);
+    }
+
     //Querry all Courses User Enrolled In
     const enrolledCourses = await CourseModel.findAll({
-        include: {
-            model: EnrolledModel,
-            where: {user_id: req.user.id},
-            required: true
-        },
-        order: [['name','ASC']],
-        attributes: ['id','name','cycle'],
+        where: {id: coursesID}
     });
 
     //Check if somehow Enrolled Courses Undefined

@@ -25,7 +25,7 @@ Page Courses Dashboard : localhost:4000/courses
 
 Page Courses Toutes : localhost:4000/courses/all
 
-Page Courses Inscrit : localhost:4000/courses/my/enrolled et localhost:4000/courses/my/enrollment/all
+Page Courses Inscrit : localhost:4000/courses/my/enrolled et localhost:4000/courses/my/enrollments/all
 
 Page Courses Donnees : localhost:4000/courses/my/owned
 
@@ -55,6 +55,6 @@ Page File Course : localhost:4000/courses/:course_id/files/:file_id
 
 Page File Course Download : localhost:4000/courses/:course_id/files/:file_id/download
 
-Page Enrolleds Ajouter : /my/enrollments/enroll/:course_id
+Page Enrolleds Ajouter : localhost:4000/courses/my/enrollments/enroll/:course_id
 
 Page Deconnexion : localhost:4000/logout

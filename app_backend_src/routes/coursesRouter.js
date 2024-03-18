@@ -19,7 +19,7 @@ coursesRouter.route('/').get(coursesController.getCoursesDashboard);
 coursesRouter.route('/all').get(coursesController.getCourses);
 
 //Get Logged User Followed Courses
-coursesRouter.route('/my/enrolled').get(authMiddleware.checkAuthenticated,coursesController.getLoggedUserFollowedCourses);
+coursesRouter.route('/my/enrolled').get(authMiddleware.checkAuthenticated,coursesController.getLoggedUserEnrolledCourses);
 
 //Get Logged User Owned Courses
 coursesRouter.route('/my/owned').get(authMiddleware.checkAuthenticated,coursesController.getLoggedUserOwnedCourses);

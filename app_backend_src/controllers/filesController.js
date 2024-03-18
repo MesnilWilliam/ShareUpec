@@ -98,7 +98,7 @@ const addLoggedUserCourseFile = async (req,res,next) => {
     }
 
     //Only use Needed Fields to let AutoGen Fill ID and then some
-    const addedFile = await FileModel.create({
+    const addedFile = await FilesModel.create({
         name: formFile.name,
         extension: formFile.extension,
         link: formFile.link,
@@ -194,8 +194,8 @@ const downloadFile = async (req,res,next) => {
             return next(CustomError.serverError("Error : Something Happened"));
         }
 
-        const jsonResponse = jsonBuilder.simpleResponse(req.originalUrl,`Downloaded in User Home Directory's ${proces.env.DOWNLOAD_DIRECTORY} Folder`);
-        res.status(200).json(jsonResponse);
+        const jsonResponse = jsonBuilder.simpleResponse(req.originalUrl,`Downloaded in User Home Directory's ${process.env.DOWNLOAD_DIRECTORY} Folder`);
+        return res.status(200).json(jsonResponse);
     }
 
     //Check if File by Binary

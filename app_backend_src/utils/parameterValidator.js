@@ -1,5 +1,6 @@
 //Types and Continuity of Parameters Verified By Some Functions
 const emailValidator = require('email-validator');
+const path = require('path');
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -79,19 +80,10 @@ const isDeclaredFileExtensionValid = (declaredExtension) => {
 
 const isFileExtensionValid = (filePath,declaredExtension) => {
     //Use Path to Get Extension
-    filePathExtension = path.extname(path.basename(filePath)).substring(1);
-
-    //Cas URL : Check If Path Querry String
-    if(filePathExtension.include('?')){
-        filePathExtension = filePathExtension.split('?')[0];
-    }
+    filePathExtension = path.extname(path.basename(filePath))
 
     //Compare to Declared Extension
-    if(filePathExtension !== declaredExtension){
-        return false;
-    }
-
-    return true;
+    return filePathExtension.includes(declaredExtension);
 }
 
 module.exports = {

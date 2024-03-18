@@ -9,6 +9,8 @@
 //Build Response JSON
 const jsonBuilder = require('../utils/jsonBuilder.js');
 
+const {sql} = require('sequelize');
+
 //Import Models for Database Interactions
 const CustomError = require('../config/CustomError.js');
 const UserModel = require('../models/UserModel.js');
@@ -49,27 +51,36 @@ const getCourses = async (req,res,next) => {
     res.status(200).json(jsonResponse);
 }
 
-//@desc Get Logged User Followed Courses from database
+//@desc Get Logged User Enrolled Courses from database
 //@route GET /courses/my/enrolled
 //@access public
-const getLoggedUserFollowedCourses = async (req,res,next) => {
-    //Querry all Courses User Follows
-    const followedCourses = await CourseModel.findAll({
-        include: {
-            model: EnrolledModel,
-            where: {user_id: req.user.id},
-            required: true
-        },
-        order: [['name','ASC']],
-        attributes: ['id','name','cycle'],
+const getLoggedUserEnrolledCourses = async (req,res,next) => {
+    //Querry all CoursesID User Enrolled In
+    const enrolledPairs = await EnrolledModel.findAll({
+        where: {user_id: req.user.id}
     });
 
-    //Check if somehow Followed Courses Undefined
-    if(!followedCourses){
+    //Check if somehow Enrolled Courses Undefined
+    if(!enrolledPairs){
+        return next(CustomError.serverError('Something Happened'));
+    };
+
+    var coursesID = [];
+    for(enrolledPair of enrolledPairs){
+        coursesID.push(enrolledPair.course_id);
+    }
+
+    //Querry all Courses User Enrolled In
+    const enrolledCourses = await CourseModel.findAll({
+        where: {id: coursesID}
+    });
+
+    //Check if somehow Enrolled Courses Undefined
+    if(!enrolledCourses){
         return next(CustomError.serverError('Something Happened'));
     };
     
-    const jsonResponse = jsonBuilder.simpleResponse(req.originalUrl,JSON.stringify(followedCourses, null, 2));
+    const jsonResponse = jsonBuilder.simpleResponse(req.originalUrl,JSON.stringify(enrolledCourses, null, 2));
     res.status(200).json(jsonResponse);
 }
 
@@ -105,16 +116,20 @@ const getCoursesByShareToken = async (req,res,next) => {
         return next(CustomError.badRequest("Error : Invalid ShareCode"))
     }
 
-    //Querry all Courses By Token
+    //Querry User holding this Token
+    const tokenHolder = await UserModel.findOne({
+        where: {share_code: token},
+        attributes: ['id']
+    });
+
+    //Check if somehow User Undefined
+    if(!tokenHolder){
+        return next(CustomError.serverError('Something Happened'));
+    };
+
+    //Querry all Courses By TokenHolder
     const tokenCourses = await CourseModel.findAll({
-        include: {
-            model: UserModel,
-            where: {
-                share_code: token,
-                id: CourseModel.owner_id
-            },
-            required: true
-        },
+        where: {owner_id: tokenHolder.id},
         order: [['name','ASC']],
         attributes: ['id','name','cycle'],
     });
@@ -252,7 +267,7 @@ const deleteLoggedUserCourse = async (req,res) => {
 module.exports = {
     getCoursesDashboard,
     getCourses,
-    getLoggedUserFollowedCourses,
+    getLoggedUserEnrolledCourses,
     getLoggedUserOwnedCourses,
     getCoursesByShareToken,
     createLoggedUserCourse,
