@@ -112,7 +112,7 @@ app.use('/courses',coursesRouter);
 //Routes for Admin
 app.use('/admin',adminRouter);
 //Routes 404 Page
-app.use('*', (res,req,next) => {
+app.use('*', (req,res,next) => {
     return next(CustomError.notFound("Error : Page Not Found"));
 })
 
