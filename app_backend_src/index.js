@@ -58,6 +58,7 @@ const dashboardRouter = require('./routes/dashboardRouter.js');
 const coursesRouter = require('./routes/coursesRouter.js');
 const adminRouter = require('./routes/adminRouter.js');
 const authMiddleware = require('./middlewares/authMiddleware.js');
+const CustomError = require('./config/CustomError.js');
 const errorHandler = require('./middlewares/errorHandler.js');
 
 //MiddleWares
@@ -110,6 +111,10 @@ app.use('/dashboard',dashboardRouter);
 app.use('/courses',coursesRouter);
 //Routes for Admin
 app.use('/admin',adminRouter);
+//Routes 404 Page
+app.use('*', (res,req,next) => {
+    return next(CustomError.notFound("Error : Page Not Found"));
+})
 
 //MIddleWare for Error
 app.use(errorHandler);

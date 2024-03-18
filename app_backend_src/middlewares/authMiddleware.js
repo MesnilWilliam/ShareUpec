@@ -1,3 +1,4 @@
+const CustomError = require('../config/CustomError.js');
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -19,7 +20,7 @@ const checkAdmin = async (req,res,next) => {
             return next();
         }
     }
-    return res.redirect('/auth/login');
+    return next(CustomError.notFound("Error : Page Not Found"));
 }
 
 module.exports = {
