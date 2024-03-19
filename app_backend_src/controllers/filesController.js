@@ -11,10 +11,8 @@ const jsonBuilder = require('../utils/jsonBuilder.js');
 
 //Import Models for Database Interactions
 const CustomError = require('../config/CustomError.js');
-const UserModel = require('../models/UserModel.js');
 const CourseModel = require('../models/CourseModel.js');
-const EnrolledModel = require('../models/EnrolledModel.js');
-const FilesModel = require('../models/FileModel.js');
+const FileModel = require('../models/FileModel.js');
 const parameterValidator = require('../utils/parameterValidator.js');
 const fileDownload = require('../utils/fileDownload.js');
 const dotenv = require('dotenv');
@@ -33,7 +31,7 @@ const getFilesForCourse = async (req,res,next) => {
     }
 
     //Querry all Files for Course
-    const files = await FilesModel.findAll({
+    const files = await FileModel.findAll({
         include: {
             model: CourseModel,
             where: {id: course_id},
@@ -98,7 +96,7 @@ const addLoggedUserCourseFile = async (req,res,next) => {
     }
 
     //Only use Needed Fields to let AutoGen Fill ID and then some
-    const addedFile = await FilesModel.create({
+    const addedFile = await FileModel.create({
         name: formFile.name,
         extension: formFile.extension,
         link: formFile.link,
@@ -133,7 +131,7 @@ const getFileForCourse = async (req,res,next) => {
     }
 
     //Querry One File with id for Course
-    const file = await FilesModel.findOne({
+    const file = await FileModel.findOne({
         where: {id: file_id},
         include: {
             model: CourseModel,
@@ -167,7 +165,7 @@ const downloadFile = async (req,res,next) => {
     }
 
     //Querry One File with id for Course
-    const file = await FilesModel.findOne({
+    const file = await FileModel.findOne({
         where: {id: file_id},
         include: {
             model: CourseModel,
@@ -251,7 +249,7 @@ const updateLoggedUserCourseFile = async (req,res,next) => {
 
     //Querry One File with id for Course
     //As Update, Querry ALL Fields : Can be further secured
-    const file = await FilesModel.findOne({
+    const file = await FileModel.findOne({
         where: {id: file_id},
         include: {
             model: CourseModel,
