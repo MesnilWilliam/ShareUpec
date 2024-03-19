@@ -81,7 +81,7 @@ const postRegistrationForm = async (req,res,next) => {
     };
     
     //Check all needed Fields are here
-    if(!formUser.first_name || !formUser.last_name || !formUser.email || !formUser.password || !formUser.confirmPassword){
+    if(!formUser.first_name || !formUser.last_name || !formUser.email || !formUser.password || !formUser.confirm_password){
         return next(CustomError.badRequest("Could not proceed : Missing Value"));
     };
 
@@ -91,7 +91,7 @@ const postRegistrationForm = async (req,res,next) => {
     }
 
     //Check Password Confirm
-    if(formUser.password != formUser.confirmPassword){
+    if(formUser.password != formUser.confirm_password){
         return next(CustomError.badRequest("Could not proceed : Password Mismatch"));
     }
 

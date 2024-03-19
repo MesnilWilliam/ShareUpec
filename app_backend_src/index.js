@@ -61,6 +61,9 @@ const authMiddleware = require('./middlewares/authMiddleware.js');
 const CustomError = require('./config/CustomError.js');
 const errorHandler = require('./middlewares/errorHandler.js');
 
+//Swagger API Documentation
+const swaggerDocs = require('./swagger.js');
+
 //MiddleWares
 //Allow to define intermediate functions called when using the API
 //Add MiddleWare : app.use(URL,Callback)
@@ -111,19 +114,22 @@ app.use('/dashboard',dashboardRouter);
 app.use('/courses',coursesRouter);
 //Routes for Admin
 app.use('/admin',adminRouter);
-//Routes 404 Page
-app.use('*', (req,res,next) => {
-    return next(CustomError.notFound("Error : Page Not Found"));
-})
-
-//MIddleWare for Error
-app.use(errorHandler);
 
 const PORT = process.env.SERVER_PORT || 4000;
 //Starting API Server
 app.listen(PORT, () => {
     console.log(`Node API Running On http://localhost:${PORT}`);
 });
+//Swagger
+swaggerDocs(app,PORT);
+
+//Routes 404 Page : Use Before Last
+app.use('*', (req,res,next) => {
+    return next(CustomError.notFound("Error : Page Not Found"));
+})
+
+//MIddleWare for Error : Use Last
+app.use(errorHandler);
 
 //Authentification : https://medium.com/@prashantramnyc/node-js-with-passport-authentication-simplified-76ca65ee91e5
 //Local/JWT : https://www.youtube.com/playlist?list=PLYQSCk-qyTW2ewJ05f_GKHtTIzjynDgjK

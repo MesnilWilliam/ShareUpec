@@ -9,8 +9,6 @@
 //Build Response JSON
 const jsonBuilder = require('../utils/jsonBuilder.js');
 
-const {sql} = require('sequelize');
-
 //Import Models for Database Interactions
 const CustomError = require('../config/CustomError.js');
 const UserModel = require('../models/UserModel.js');
