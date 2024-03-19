@@ -52,7 +52,7 @@ dashboardRouter.route('/profile').get(authMiddleware.checkAuthenticated,dashboar
 /**
 * @openapi
 * '/dashboard/profile/update':
-*  put:
+*  patch:
 *     tags:
 *     - Dashboard Controller
 *     summary: Update User Profile

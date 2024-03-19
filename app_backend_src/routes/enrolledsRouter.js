@@ -11,6 +11,15 @@ const authMiddleware = require('../middlewares/authMiddleware.js');
 *     tags:
 *     - Enrolleds Controller
 *     summary: Add Enrolled Logged User To Course
+*     parameters:
+*      - id: User ID
+*        in: session
+*        description: The Inique ID of the User
+*        required: true
+*      - course_id: Course ID
+*        in: path
+*        description: The Inique ID of the Course
+*        required: true
 *     requestBody:
 *      required: false
 *      content:

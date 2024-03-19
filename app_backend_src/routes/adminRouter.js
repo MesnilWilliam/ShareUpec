@@ -63,7 +63,7 @@ adminRouter.route('/users').post(authMiddleware.checkAdmin,adminController.creat
 
 /**
 * @openapi
-* 'admin/users/{user_id}':
+* '/admin/users/{user_id}':
 *  get:
 *     tags:
 *     - Admin Controller
@@ -86,10 +86,15 @@ adminRouter.route('/users/:user_id').get(authMiddleware.checkAdmin,adminControll
 /**
 * @openapi
 * '/admin/users/{user_id}':
-*  put:
+*  patch:
 *     tags:
 *     - Admin Controller
 *     summary: Update User by ID
+*     parameters:
+*      - user_id: User ID
+*        in: path
+*        description: The Inique ID of the User
+*        required: true
 *     requestBody:
 *      required: true
 *      content:

@@ -33,6 +33,11 @@ filesRouter.route('/:course_id/files').get(filesController.getFilesForCourse);
 *     tags:
 *     - Files Controller
 *     summary: Add Files to Defined Course
+*     parameters:
+*      - course_id: Course ID
+*        in: path
+*        description: The Inique ID of the Course
+*        required: true
 *     requestBody:
 *      required: true
 *      content:
@@ -69,7 +74,7 @@ filesRouter.route('/:course_id/files/add').post(authMiddleware.checkAuthenticate
 
 /**
 * @openapi
-* '/courses/{course_id}/files/{file_id}:
+* '/courses/{course_id}/files/{file_id}':
 *  get:
 *     tags:
 *     - Files Controller
@@ -95,7 +100,7 @@ filesRouter.route('/:course_id/files/:file_id').get(filesController.getFileForCo
 
 /**
 * @openapi
-* '/courses/{course_id}/files/{file_id}/download:
+* '/courses/{course_id}/files/{file_id}/download':
 *  get:
 *     tags:
 *     - Files Controller
@@ -124,10 +129,19 @@ filesRouter.route('/:course_id/files/:file_id/download').get(filesController.dow
 /**
 * @openapi
 * '/courses/{course_id}/files/{file_id}':
-*  put:
+*  patch:
 *     tags:
 *     - Files Controller
 *     summary: Update File by ID for Defined Course
+*     parameters:
+*      - course_id: Course ID
+*        in: path
+*        description: The Inique ID of the Course
+*        required: true
+*      - file_id: File ID
+*        in: path
+*        description: The Inique ID of the File
+*        required: true
 *     requestBody:
 *      required: true
 *      content:

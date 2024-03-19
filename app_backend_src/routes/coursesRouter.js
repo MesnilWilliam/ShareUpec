@@ -165,10 +165,15 @@ coursesRouter.route('/:course_id').get(coursesController.getCourse);
 /**
 * @openapi
 * '/courses/my/{course_id}':
-*  put:
+*  patch:
 *     tags:
 *     - Courses Controller
 *     summary: Update Course by ID
+*     parameters:
+*      - course_id: Course ID
+*        in: path
+*        description: The Inique ID of the Course
+*        required: true
 *     requestBody:
 *      required: true
 *      content:
